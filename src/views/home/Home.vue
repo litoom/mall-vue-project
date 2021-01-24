@@ -3,9 +3,27 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <home-swiper :banners="banners"></home-swiper>
 
-    <recommend-view :recommends="recommends"> </recommend-view>
+    <scroll class="content" ref="scroll">
+      <home-swiper :banners="banners"></home-swiper>
+      <recommend-view :recommends="recommends"> </recommend-view>
+      <feature-view></feature-view>
+      <tab-control
+        :titles="['流行', '新款', '精选']"
+        class="tab-control"
+        @tabClick="tabClick"
+      >
+      </tab-control>
+
+      <goods-list :goods="showGoods"> </goods-list>
+    </scroll>
+
+    <!-- 原生元素可以直接监听事件
+    如 <button @click="btnClick"> 
+    但是组件不能直接监听,使用native修饰符可以监听组件,新版不需要这个修饰符也可以监听
+    -->
+    <back-top @click.native="backClick"></back-top>
+
     <!-- 轮播图抽取为组件 -->
     <!-- <swiper>
       <swiper-item v-for="(item,index) in banners" :key="item.index">
@@ -14,120 +32,111 @@
         </a>
       </swiper-item>
     </swiper> -->
-    <feature-view></feature-view>
-    <tab-control
-      :titles="['流行', '新款', '精选']"
-      class="tab-control"
-      @tabClick="tabClick"
-    >
-    </tab-control>
-
-    <goods-list :goods="showGoods"> </goods-list>
 
     <!-- 小机灵鬼 -->
-    <ul>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
+    <!-- <ul>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+      <li>xxxxx</li>
+    </ul> -->
   </div>
 </template>
 
@@ -146,6 +155,10 @@ import TabControl from "../../components/content/tabControl/TabControl";
 import GoodsList from "../../components/content/goods/GoodsList";
 // import GoodsListItem from '../../components/content/goods/GoodsListItem';
 
+// import BScroll from 'better-scroll';滚动框架better-scroll
+import Scroll from "../../components/common/scroll/Scroll";
+import BackTop from "../../components/content/backTop/BackTop";
+
 export default {
   name: "Home",
   components: {
@@ -157,6 +170,8 @@ export default {
     FeatureView,
     TabControl,
     GoodsList,
+    Scroll,
+    BackTop,
   },
   //在组件创建出来时执行
   created() {
@@ -213,6 +228,14 @@ export default {
           break;
       }
     },
+    //点击返回顶部
+    backClick() {
+      //scrollTo(x,y,时间ms)
+      //这个scrollTo是封装再Scroll组件里面的方法，会方便一点
+      //通过ref属性  this.$refs.scroll是Scroll这个组件
+      //this.$refs.scroll.scrollTo(0,0,500);  调用Scroll组件的scrollTo方法
+      this.$refs.scroll.scrollTo(0,0,500);
+    },
   },
   //存储请求回来的数据
   data() {
@@ -239,10 +262,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #home {
   /* 解决导航栏盖住轮播图的问题,或者使用粘性定位 */
   padding-top: 44px;
+  height: 100vh;
+  position: relative;
 }
 .home-nav {
   position: fixed;
@@ -262,5 +287,18 @@ export default {
   position: sticky;
   top: 44px;
   z-index: 20;
+}
+/* 这个content指的是这个组件设置的class，因为有scoped作用的的概念 */
+.content {
+  /* height: calc(100vh - 44px - 49px);
+  background-color: skyblue;
+  overflow: hidden; */
+
+  /* height: 300px; */
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  background-color: skyblue;
+  overflow: hidden;
 }
 </style>

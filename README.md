@@ -33,11 +33,14 @@
 	//public文件夹在打包时，会原封不动的复制到dist文件夹里面
 
 8.首页制作
-	8.1封装独立的导航组件NavBar，并预留插槽，/src/components/			 common/navbar/NavBar.vue
-		 导航插槽样式书写
+	8.1封装独立的导航组件NavBar，并预留插槽,方便其他页面复用
+		/src/components/common/navbar/NavBar.vue
+		导航插槽样式书写
 	8.2请求首页的多个数据axios
 		网络模块的封装,在network里面新增一个home.js文件，封装的是对首页数据的请求,可以对首页的多个请求统一管理
-
+	8.3 轮播图
+		swiper框架学习，不要忘记了！！！
+		
 9.FeatureView封装
 	本周流行封装，就是一张照片显示
 
@@ -58,8 +61,30 @@
 	组件封装content/goods/GoodsList.vue &GoodsListItem.vue
 	逻辑：请求的响应数据在Home.vue的data里面，封装一个大的组件GoodsList，在Home里使用GoodsList时	<goods-list  :goods="goods['pop'].list"> </goods-list> 把Home页面保存的商品列表信息传给GoodsList组件，在GoodsList对商品列表信息进行遍历，又把商品列表信息里的数据传给GoodsListItem组件，在GoodsListItem里面进行更多详细信息的显示
 
+13.点击切换商品首页数据展示，子组件数据传递到父组件上
+	this.getHomeGoods("pop");
+	this.getHomeGoods("new");
+	this.getHomeGoods("sell");
+	上面三个函数把三个栏目的数据全都请求下来了，但是只显示了一个数据，点击哪个项目，就把点击的index的数据传递给home组件，在home组件显示响应的项目数据
 
+14.better-scroll安装和使用
+	演示代码在category文件夹内
+	安装:  npm i --save better-scroll@1.13.2 
+	原理： wrapper，也就是父容器，它会有固定的高度。黄色部分为 content，它是父容器的第一个子元素，它的高度会随着内容的大小而撑高。当 content 的高度超过父容器wrapper的高度,就可以滚动内容区,外层盒子限制高度，内层盒子是滚动内容
 
+15.如果要是在Home页面使用better-scroll
+	import引入better-scroll，在Home模板设置两个div，一个时wrapper，一个是content，wrapper设置高度,然后再mounted生命周期函数中new BScroll即可,但是写到Home里面耦合度高
+
+16.better-scroll封装为组件:	
+	注意封装的模板有wrapper和content两个div，配合better-scroll使用；
+	尽量不适用document.querySeletor()获取元素，应使用ref获取元素，这样能够准确的获取某一个元素
+
+17.点击返回顶部组件
+	点击返回组件按钮样式书写；
+	点击返回顶部的逻辑书写：原生元素可以直接监听事件，如 <button @click="btnClick"> ，但是组件不能直接监听,使用native修饰符可以监听组件,新版不需要这个修饰符也可以监听
+
+	backTop的显示与隐藏:
+		
 
 Question:
 1.在cli3中，别名报错问题
