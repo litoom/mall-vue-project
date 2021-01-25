@@ -4,7 +4,14 @@
       <div slot="center">购物街</div>
     </nav-bar>
 
-    <scroll class="content" ref="scroll">
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
+    >
       <home-swiper :banners="banners"></home-swiper>
       <recommend-view :recommends="recommends"> </recommend-view>
       <feature-view></feature-view>
@@ -22,7 +29,7 @@
     如 <button @click="btnClick"> 
     但是组件不能直接监听,使用native修饰符可以监听组件,新版不需要这个修饰符也可以监听
     -->
-    <back-top @click.native="backClick"></back-top>
+    <back-top @click.native="backClick" v-show="isShowBackTop"> </back-top>
 
     <!-- 轮播图抽取为组件 -->
     <!-- <swiper>
@@ -173,6 +180,24 @@ export default {
     Scroll,
     BackTop,
   },
+  //存储请求回来的数据
+  data() {
+    return {
+      // result: null,
+      banners: [],
+      recommends: [],
+
+      //goods:保存商品的数据结构设计
+      goods: {
+        pop: { page: 0, list: [] },
+        new: { page: 0, list: [] },
+        sell: { page: 0, list: [] },
+      },
+      //默认<goods-list :goods="goods['pop'].list"> </goods-list>
+      currentType: "pop",
+      isShowBackTop: false,
+    };
+  },
   //在组件创建出来时执行
   created() {
     //this 这里的this是指向组件对象，因为created是组件调用的，所以这里的this指向组件对象
@@ -207,6 +232,9 @@ export default {
           // console.log(res);
           this.goods[type].list.push(...res.data.list);
           this.goods[type].page += 1;
+
+          //允许继续执行上拉加载更多的回调函数,放到loadMore里面更好啊
+          // this.$refs.scroll.finishPullUp();
         })
         .catch((err) => err);
     },
@@ -234,25 +262,21 @@ export default {
       //这个scrollTo是封装再Scroll组件里面的方法，会方便一点
       //通过ref属性  this.$refs.scroll是Scroll这个组件
       //this.$refs.scroll.scrollTo(0,0,500);  调用Scroll组件的scrollTo方法
-      this.$refs.scroll.scrollTo(0,0,500);
+      this.$refs.scroll.scrollTo(0, 0, 500);
     },
-  },
-  //存储请求回来的数据
-  data() {
-    return {
-      // result: null,
-      banners: [],
-      recommends: [],
+    contentScroll(position) {
+      //子组件scroll把滚动的position传到父组件home上
+      // console.log(position);
+      this.isShowBackTop = Math.abs(position.y) > 1000;
+    },
+    loadMore() {
+      // console.log('上拉，拉');
+      // currentType是点击的那个栏目
+      this.getHomeGoods(this.currentType);
 
-      //goods:保存商品的数据结构设计
-      goods: {
-        pop: { page: 0, list: [] },
-        new: { page: 0, list: [] },
-        sell: { page: 0, list: [] },
-      },
-      //默认<goods-list :goods="goods['pop'].list"> </goods-list>
-      currentType: "pop",
-    };
+      // 允许继续执行下拉加载更多的回调函数,写到getHomeGoods函数里面也可以
+      this.$refs.scroll.scroll.finishPullUp();
+    },
   },
   computed: {
     showGoods() {
