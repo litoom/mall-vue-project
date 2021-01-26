@@ -35,7 +35,7 @@ export default {
     this.scroll = new BScroll(this.$refs.wrapper, {
       click: true, //控制非button元素是否可以监听点击事件
       probeType: this.probeType, //3:实时监听,表示只要在滚动过程中一直监听
-      pullUpLoad: this.pullUpLoad,
+      pullUpLoad: this.pullUpLoad,  //上拉加载更多
     });
     //2.监听滚动的位置
     this.scroll.on("scroll", (position) => {
@@ -45,7 +45,7 @@ export default {
       this.$emit("scroll", position);
     });
 
-    //3.监听上拉事件
+    //3.监听滚动到底部上拉事件
     this.scroll.on("pullingUp",()=>{
       // console.log("上拉加载");
       //自定义事件传递给home组件
@@ -54,17 +54,28 @@ export default {
 
     //回到顶部,调用scrollTo函数(框架自带的)
     // this.scroll.scrollTo(0,0);
+
+    //打印scroll对象
+    console.log("scroll对象,scrollerHeight", this.scroll);
+    this.scroll.refresh(); //更新高度
   },
   methods: {
     //封装一下，方便home组件backClick方法调用
     scrollTo(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time);
+      //this.scroll &&  判断scroll等有没有加载出来
+      this.scroll &&  this.scroll.scrollTo(x, y, time);
     },
 
     //再他们的封装一个允许继续执行下拉加载更多的回调函数
-    finishPullUp(){
-      this.scroll.finishPullUp();
-    }
+    finishPullUp() {
+      this.scroll && this.scroll.finishPullUp();
+    },
+
+    //封装this.$refs.scroll.scroll.refresh();
+    refresh() {
+      this.scroll && this.scroll.refresh();
+      console.log('验证调用次数');
+    },
   },
 };
 </script>

@@ -1,6 +1,8 @@
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="">
+    <img :src="goodsItem.show.img" alt="" 
+    @load="imageLoad">
+    <!-- @load="imageLoad" 当img图片加载完成之后调用imageLoad方法 -->
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -18,6 +20,13 @@ props:{
     default() {
       return {}
     }
+  }
+},
+methods:{
+  imageLoad(){
+    // console.log('@load="imageLoad"');
+    //向事件总线发射itemImageLoad事件
+    this.$bus.$emit('itemImageLoad')
   }
 }
 }

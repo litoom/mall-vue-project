@@ -3,6 +3,15 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
+<!-- 在这又弄了一个tab-control -->
+     <tab-control
+        :titles="['流行', '新款', '精选']"
+        class="tab-control"
+        @tabClick="tabClick"
+        ref="tabControl1"
+        v-show="isTabFixed"
+        >
+      </tab-control>
 
     <scroll
       class="content"
@@ -12,13 +21,18 @@
       :pull-up-load="true"
       @pullingUp="loadMore"
     >
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper
+        :banners="banners"
+        @swiperImageLoad="swiperImageLoad"
+      ></home-swiper>
       <recommend-view :recommends="recommends"> </recommend-view>
       <feature-view></feature-view>
       <tab-control
         :titles="['流行', '新款', '精选']"
         class="tab-control"
         @tabClick="tabClick"
+        ref="tabControl2"
+        :class="{ fixed: isTabFixed }"
       >
       </tab-control>
 
@@ -165,6 +179,8 @@ import GoodsList from "../../components/content/goods/GoodsList";
 // import BScroll from 'better-scroll';滚动框架better-scroll
 import Scroll from "../../components/common/scroll/Scroll";
 import BackTop from "../../components/content/backTop/BackTop";
+import { debounce } from "../../common/utils";
+// 引入de可以直接用,不用写this
 
 export default {
   name: "Home",
@@ -196,6 +212,8 @@ export default {
       //默认<goods-list :goods="goods['pop'].list"> </goods-list>
       currentType: "pop",
       isShowBackTop: false,
+      tabOffsetTop: 0,
+      isTabFixed: false,
     };
   },
   //在组件创建出来时执行
@@ -208,6 +226,42 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
+
+    // //3.在首页监听事件总线，当首页组件创建完成时就开始监听
+    // //监听事件总线，当item中图片加载完成
+    // //不要再created()里面监听，有可能获取不到
+    // this.$bus.$on('itemImageLoad',()=>{
+    //   // console.log('xxxxxxxxxxxxxxxxxxxxxxx');
+    //   // 在这里刷新scroll的refresh
+    //   //减少一个单词的refresh
+    //   this.$refs.scroll.refresh();
+    //   //箭头函数的this就是cerated里的this，created是组件对象的函数，因此created里的this就是这个组件对象
+    // })
+
+    //在created()里面获取不到组件对象
+    // this.tabOffsetTop = this.$refs.TabControl =undefined
+  },
+  mounted() {
+    // //3.在首页监听事件总线，当首页组件创建完成时就开始监听
+    // //监听事件总线，当item中图片加载完成
+    // //不要再created()里面监听，有可能获取不到
+    // this.$bus.$on('itemImageLoad',()=>{
+    //   // console.log('xxxxxxxxxxxxxxxxxxxxxxx');
+    //   // 在这里刷新scroll的refresh函数封装在scroll.vue里面
+    //   //减少一个单词的refresh
+    //   this.$refs.scroll.refresh();
+    //   //箭头函数的this就是cerated里的this，created是组件对象的函数，因此created里的this就是这个组件对象
+    // 防抖写法：图片加载完成的时间监听
+    const refresh = this.debounce(this.$refs.scroll.refresh, 500);
+    this.$bus.$on("itemImageLoad", () => {
+      // refresh是个局部变量,但是执行结束并不会被销毁，因为它是一个闭包，refresh()引用着refresh
+      refresh();
+    });
+    //获取tabControl的offsetTop,这里获取的是组件，不是dom元素,组件没有offsetTop属性
+    //所有的组件都有一个属性$el:用于获取组件中的dom元素
+    // this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
+    // console.log(this.tabOffsetTop);
+    //但是，放到mounted里面也不合适，因为图片加载需要时间，这样获取的offsetTop不准确，要等到轮播图加载出来之后再计算offsetTop
   },
   methods: {
     /**
@@ -255,6 +309,8 @@ export default {
           this.currentType = "sell";
           break;
       }
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index;
     },
     //点击返回顶部
     backClick() {
@@ -264,10 +320,14 @@ export default {
       //this.$refs.scroll.scrollTo(0,0,500);  调用Scroll组件的scrollTo方法
       this.$refs.scroll.scrollTo(0, 0, 500);
     },
+    //监听滚动
     contentScroll(position) {
       //子组件scroll把滚动的position传到父组件home上
       // console.log(position);
+      //1.判断BackTop是否显示，true or false
       this.isShowBackTop = Math.abs(position.y) > 1000;
+      //2.决定tabControl是否吸顶(position:fixed)
+      this.isTabFixed = Math.abs(position.y) > this.tabOffsetTop;
     },
     loadMore() {
       // console.log('上拉，拉');
@@ -276,6 +336,22 @@ export default {
 
       // 允许继续执行下拉加载更多的回调函数,写到getHomeGoods函数里面也可以
       this.$refs.scroll.scroll.finishPullUp();
+    },
+    //封装防抖函数
+    debounce(func, delay) {
+      let timer = null;
+      return function (...args) {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+          func.apply(this, args);
+        }, delay);
+      };
+    },
+    swiperImageLoad() {
+      // console.log(this.$refs.tabControl.$el.offsetTop);
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
     },
   },
   computed: {
@@ -289,16 +365,18 @@ export default {
 <style scoped>
 #home {
   /* 解决导航栏盖住轮播图的问题,或者使用粘性定位 */
-  padding-top: 44px;
+  /* padding-top: 44px; */
   height: 100vh;
   position: relative;
+  z-index: 30;
 }
 .home-nav {
-  position: fixed;
+  /* 再使用浏览器原生滚动时，为了让导航栏不跟随一起滚动，用下面的css样式 */
+  /* position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: 20; */
   background-color: pink;
   color: white;
   font-size: 18px;
@@ -308,21 +386,33 @@ export default {
   *   为什么要写到Home.vue里面
   *    因为如果写到TabControl.vue里，则所有使用TabControl.vue的组件都会有吸顶效果，有的项目不需要这个效果
   */
-  position: sticky;
-  top: 44px;
-  z-index: 20;
+  position: sticky; 
+   /* top: 44px; */
+  z-index: 20; 
 }
 /* 这个content指的是这个组件设置的class，因为有scoped作用的的概念 */
 .content {
-  /* height: calc(100vh - 44px - 49px);
-  background-color: skyblue;
-  overflow: hidden; */
+  height: calc(100vh - 44px - 49px);
+  /* background-color: skyblue; */
+  overflow: hidden;
 
   /* height: 300px; */
   position: absolute;
-  top: 44px;
+  top: 45px;
   bottom: 49px;
-  background-color: skyblue;
-  overflow: hidden;
+  z-index: 0;
+  /* background-color: skyblue; */
+  /* overflow: hidden; */
 }
+/* .fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 44px;
+  /* 问题： */
+        /* 1.tabControl脱标，下面的图片会闪一下到上面
+        2.tabControl消失
+          因为Better-Scroll原理是tranfrom的translate移动的，fixed的元素也会被平移
+   */ 
+
 </style>
