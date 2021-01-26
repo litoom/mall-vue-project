@@ -291,30 +291,59 @@ tabControl吸顶效果:
         /* 1.tabControl脱标，下面的图片会闪一下到上面
         2.tabControl消失
           因为Better-Scroll原理是tranfrom的translate移动的，fixed的元素也会被平移
-   */ 
+   			
+Home离开时记录位置和状态:
+	1.让Home组件不要被随意销毁掉：
+		路由跳转组件会销毁destroyed(){},再点回组件,组件会重新创建
+		在App.vue里使用keep-alive标签包裹
+		 <keep-alive>
+      <router-view></router-view>
+     </keep-alive>
+	2.让Home组件中的内容保持原来的位置：
+		离开Home时保存一个位置信息saveY;进来时，将位置设置为原来保存的位置信息saveY即可；
+		// 组件活跃时执行的函数
+		activated() {},
+		// 组件离开时执行的函数
+		deactivated() {
+		}
+
+
+详情页制作:
+	跳转到详情页并携带商品id
+		1.监听GoodsListItem的点击事件;
+		2.给详情页配置路由,增加Detali.vue组件,index.js配置路由,并在GoodsListItem配置this.$router.push('/detail'),因为需要动态传入参数，这里选择动态路由的方式：path:"/detail/:id"
+			this.$router.push('/deati/' + xxxx)
+		3.当点击GoodsListItem时，跳转路由到Detail组件，在Detail组件里面需要获取到跳转路由的params并发送网络请求，并显示
+
+				路由跳转传递参数：
+					动态路由方式:path:"/detail/:id"
+						this.$router.push('/deati/' + xxxx)
+					query传递参数：
+						itemClick(){
+							this.$router.push({
+								path:'deatil',
+								query:{}
+								})
+							}
+
+	详情页导航栏制作：
+	数据请求以及轮播图显示:
+		网络请求封装到deatil.js里面
+		路由被keep-alive，组件不会销毁，也不会创建新的组件，导致Detail详情页面没有刷新新的数据,解决：在App.vue里面的<keep-alive exclude='Deatil'>
+	商品基本信息的展示:
+		对请求来的数据进行整合，整合未一个数据对象，封装到detail.js里面的一个类上
+	商家信息的展示:
+		也封装到了detail.js的类上
+	商品详情页面不显示TabBar
+
 
 注意：
-	在created声明周期函数里面通过document.querySelector()获取dom元素都是空的，因为dom可能在组件创建时还没有挂载上去
+	首页：
+		在created声明周期函数里面通过document.querySelector()获取dom元素都是空的，因为dom可能在组件创建时还没有挂载上去
+		
+		防抖:在规定的事件内执行多次事件只执行最后一次
 
-
-
-	防抖:在规定的事件内执行多次事件只执行最后一次
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	详情页面：
 
 
 

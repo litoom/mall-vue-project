@@ -1,7 +1,10 @@
 <template>
   <div id="app">
-    <router-view></router-view>
     <main-tab-bar></main-tab-bar>
+    <!-- 让Detail详情页面不保持缓存,exclude写的内容时组件的name -->
+    <keep-alive exclude='Detail'>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 

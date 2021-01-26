@@ -76,6 +76,10 @@ export default {
       this.scroll && this.scroll.refresh();
       console.log('验证调用次数');
     },
+    //封装一下离开Home组件滚动的位置信息
+    getScrollY(){
+      return this.scroll ? this.scroll.y : 0;
+    }
   },
 };
 </script>

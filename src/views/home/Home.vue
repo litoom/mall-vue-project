@@ -3,15 +3,15 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-<!-- 在这又弄了一个tab-control -->
-     <tab-control
-        :titles="['流行', '新款', '精选']"
-        class="tab-control"
-        @tabClick="tabClick"
-        ref="tabControl1"
-        v-show="isTabFixed"
-        >
-      </tab-control>
+    <!-- 在这又弄了一个tab-control -->
+    <tab-control
+      :titles="['流行', '新款', '精选']"
+      class="tab-control"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      v-show="isTabFixed"
+    >
+    </tab-control>
 
     <scroll
       class="content"
@@ -21,10 +21,8 @@
       :pull-up-load="true"
       @pullingUp="loadMore"
     >
-      <home-swiper
-        :banners="banners"
-        @swiperImageLoad="swiperImageLoad"
-      ></home-swiper>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad">
+      </home-swiper>
       <recommend-view :recommends="recommends"> </recommend-view>
       <feature-view></feature-view>
       <tab-control
@@ -180,7 +178,9 @@ import GoodsList from "../../components/content/goods/GoodsList";
 import Scroll from "../../components/common/scroll/Scroll";
 import BackTop from "../../components/content/backTop/BackTop";
 import { debounce } from "../../common/utils";
-// 引入de可以直接用,不用写this
+import MainTabBar from "../../components/content/mainTabbar/MainTabBar";
+
+// 引入的可以直接用,不用写this
 
 export default {
   name: "Home",
@@ -195,6 +195,7 @@ export default {
     GoodsList,
     Scroll,
     BackTop,
+    MainTabBar,
   },
   //存储请求回来的数据
   data() {
@@ -214,7 +215,25 @@ export default {
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
+      saveY: 0,
     };
+  },
+  //路由跳转组件会销毁
+  destroyed() {
+    console.log("呀，路由跳转组件会销毁");
+  },
+  // 组件活跃时执行的函数，这两个函数配合keep-alive使用
+  activated() {
+    console.log("Home组件活跃时");
+     //这里最好刷新一次高度
+    this.$refs.scroll.refresh();
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+  },
+  // 组件离开时执行的函数
+  deactivated() {
+    console.log("Home组件不活跃时,离开时");
+    // this.saveY = this.$refs.scroll.scroll.y;
+    this.saveY = this.$refs.scroll.getScrollY();
   },
   //在组件创建出来时执行
   created() {
@@ -386,9 +405,9 @@ export default {
   *   为什么要写到Home.vue里面
   *    因为如果写到TabControl.vue里，则所有使用TabControl.vue的组件都会有吸顶效果，有的项目不需要这个效果
   */
-  position: sticky; 
-   /* top: 44px; */
-  z-index: 20; 
+  position: sticky;
+  /* top: 44px; */
+  z-index: 20;
 }
 /* 这个content指的是这个组件设置的class，因为有scoped作用的的概念 */
 .content {
@@ -398,7 +417,7 @@ export default {
 
   /* height: 300px; */
   position: absolute;
-  top: 45px;
+  top: 44px;
   bottom: 49px;
   z-index: 0;
   /* background-color: skyblue; */
@@ -410,9 +429,8 @@ export default {
   right: 0;
   top: 44px;
   /* 问题： */
-        /* 1.tabControl脱标，下面的图片会闪一下到上面
+/* 1.tabControl脱标，下面的图片会闪一下到上面
         2.tabControl消失
           因为Better-Scroll原理是tranfrom的translate移动的，fixed的元素也会被平移
-   */ 
-
+   */
 </style>
