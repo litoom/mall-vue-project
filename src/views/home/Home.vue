@@ -234,6 +234,9 @@ export default {
     console.log("Home组件不活跃时,离开时");
     // this.saveY = this.$refs.scroll.scroll.y;
     this.saveY = this.$refs.scroll.getScrollY();
+
+    //取消全局事件的监听
+    // this.$bus.$of('itemImgLoad','监听事件总线上itemImgLoad的回调的函数');
   },
   //在组件创建出来时执行
   created() {
@@ -271,10 +274,10 @@ export default {
     //   this.$refs.scroll.refresh();
     //   //箭头函数的this就是cerated里的this，created是组件对象的函数，因此created里的this就是这个组件对象
     // 防抖写法：图片加载完成的时间监听
-    const refresh = this.debounce(this.$refs.scroll.refresh, 500);
+    const newrefresh = this.debounce(this.$refs.scroll.refresh, 500);
     this.$bus.$on("itemImageLoad", () => {
       // refresh是个局部变量,但是执行结束并不会被销毁，因为它是一个闭包，refresh()引用着refresh
-      refresh();
+      newrefresh();
     });
     //获取tabControl的offsetTop,这里获取的是组件，不是dom元素,组件没有offsetTop属性
     //所有的组件都有一个属性$el:用于获取组件中的dom元素

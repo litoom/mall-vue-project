@@ -208,7 +208,7 @@ Bug:
 				使用Vuex状态管理,在GoodsListItem里面通过this.$store保存一个状态在Vuex内，Home组件监听Vuex，当Vuex保存的GoodsListItem状态变化时，Home就调用一次scroll对象的方法
 			方法三:事件总线
 				事件总线与Vuex作用相似，Vuex是管理状态的，事件总线是管理事件的;
-				在GoodsListItem里，通过this.$bus.$emit('事件a'),发射事件a到事件总线里，在Home里可以监听事件总线，用this.$bus.$on('事件a',function(){回调,在这里调用refrsh()})
+				在GoodsListItem里，通过this.$bus.$emit('事件a',参数),发射事件a到事件总线里，在Home里可以监听事件总线，用this.$bus.$on('事件a',function(参数){回调,在这里调用refrsh()})
 					!!!但是并没有$bus这个属性，所以要在vue的原型上加上这个bus属性
 					main.js //Vue.prototype.$bus = new Vue()
 					为什么要赋值new Vue()?
@@ -335,7 +335,41 @@ Home离开时记录位置和状态:
 	商家信息的展示:
 		也封装到了detail.js的类上
 	商品详情页面不显示TabBar
+		因为TabBar是固定定位的，脱离了标准流
+	商品详情页的商品的详情展示：
+	商品的参数展示：
+		封装商品参数类GoodsParam
+	商品评价：
 
+	推荐数据：
+		1.请求，获取数据
+		2.在复用GoodsList时,出现获取数据结构不一致的情况，需要增加computed属性，用计算属性判断一下
+
+	详情页滚动卡顿的问题：
+		问题：详情页推荐页面使用的GoodsListItem组件，当GoodsListItem页面图片加载完之后，会通过bus总线通知到Home组件，Home组件会刷新高度，但此时Home组件不需要刷新；
+				解决一：通过路由解决:
+						//GoodsListItem 
+							methods: {
+								imageLoad() {
+									// console.log('@load="imageLoad"');
+									//向事件总线发射itemImageLoad事件
+									if(this.$route.path.indexOf('/home')){
+										this.$bus.$emit("itemImageLoad");
+									}   else if (this.$route.path.indexOf('/detail')){
+										this.$bus.$emit("DetailImageLoad")
+									}   
+				解决二：
+						//取消全局事件的监听
+						//Home deactivated
+							this.$bus.$of('itemImgLoad','监听事件总线上itemImgLoad的回调的函数');				
+				
+mixin混入:
+	作用:组件之间复用代码,data和生命周期函数、components、methods等等等都可以mixin
+
+TabControl保持一致:
+	让两个TabControl的currentIndex保持一致
+	this.$refs.topTabControl.currentIndex = index;
+	this.$refs.tabControl.currentIndex = index;
 
 注意：
 	首页：
@@ -343,8 +377,29 @@ Home离开时记录位置和状态:
 		
 		防抖:在规定的事件内执行多次事件只执行最后一次
 
-	详情页面：
+		offsetTop
 
+		服务器返回时间戳：
+			时间戳————>时间格式:
+				1.将时间戳转换为Date()对象；
+					const date = new Date(传入时间戳*1000)
+				2.将date进行格式化，转成对应的字符串：
+					方法一).date.getYear() + date.getMonth()+1...
+					方法二).date->FormatString	封装到函数里
+			封装在utils.js里面
+
+详情页-点击NavBar滚动到相应位置
+	联动效果-滚动和NavBar联动
+		1.点击NavBar滚动到对应的主题
+			//DetailNavBar.vue
+				this.$emit('titleClick',index)
+			//Deatil
+
+底部工具栏：
+	点击加入购物车
+
+详情页的回到顶部：
+	mixin混入的方式
 
 
 

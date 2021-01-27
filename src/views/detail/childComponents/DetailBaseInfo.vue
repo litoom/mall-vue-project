@@ -18,8 +18,7 @@
       <span
         class="info-service-item"
         v-for="index in goods.services.length - 1"
-        :key="index"
-      >
+        :key="index">
         <img :src="goods.services[index - 1].icon" alt="" />
         <span>{{ goods.services[index - 1].name }}</span>
       </span>

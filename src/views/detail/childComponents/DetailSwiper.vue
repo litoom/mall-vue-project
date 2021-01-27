@@ -41,5 +41,6 @@ export default {
   /* 裁取轮播图图片的大小 */
   height: 250px;
   overflow: hidden;
+  /* position: relative; */
 }
 </style>

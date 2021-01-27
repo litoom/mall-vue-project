@@ -1,6 +1,7 @@
 <template>
   <div class="goods-item" @click="itemClick">
-    <img :src="goodsItem.show.img" alt="" @load="imageLoad" />
+    <!-- <img :src="goodsItem.show.img" alt="" @load="imageLoad" /> -->
+    <img :src="showImage" alt="" @load="imageLoad" />
     <!-- @load="imageLoad" 当img图片加载完成之后调用imageLoad方法 -->
     <div class="goods-info">
       <p>{{ goodsItem.title }}</p>
@@ -26,6 +27,12 @@ export default {
       // console.log('@load="imageLoad"');
       //向事件总线发射itemImageLoad事件
       this.$bus.$emit("itemImageLoad");
+      //下面的情况是：详情页推荐页面使用的GoodsListItem组件，当GoodsListItem页面图片加载完之后，会通过bus总线通知到Home组件，Home组件会刷新高度，但此时Home组件不需要刷新；解决方案一：↓
+      // if(this.$route.path.indexOf('/home')){
+      //   this.$bus.$emit("itemImageLoad");
+      // } else if (this.$route.path.indexOf('/detail')){
+      //   this.$bus.$emit("DetailImageLoad")
+      // }   
     },
     itemClick() {
       console.log("在这里跳转到详情页噢");
@@ -33,7 +40,13 @@ export default {
       // 动态路由传递参数
       this.$router.push("/detail/" + this.goodsItem.iid);
     },
+
   },
+  computed:{
+    showImage(){
+      return this.goodsItem.image || this.goodsItem.show.img;
+    }
+  }
 };
 </script>
 
