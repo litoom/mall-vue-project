@@ -394,14 +394,36 @@ TabControl保持一致:
 			//DetailNavBar.vue
 				this.$emit('titleClick',index)
 			//Deatil
+			在Detail中监听标题的点击，获取index；
+			滚动对应的主题：
+				获取所有主题的offsetTop；
+				在哪里才能获取到正确的offsetTop?
+					1.created里不行，created里面不能获取元素；
+					2.mounted不行，在这里dom渲染但数据还没有完全获取；
+					3.获取到数据的回调中也不行，dom还没有完全渲染结束
+					4.$nextTick不行，图片高度没有被计算在内；
+					5.在监听图片加载完成时，获取的高度才是正确的
+		2.滚动时，标题发生改变	
+			1).先获取滚动的位置，监听滚动，在Scroll组件里有监听scroll事件，并发出scroll事件，发出position位置信息，在Detail组件监听scrol事件
+			2).positionY和滚动的值进行对比,根据positionY和position对比，改变index值
 
-底部工具栏：
-	点击加入购物车
-
+详情页底部工具栏的封装：
+	阿巴阿巴阿巴
 详情页的回到顶部：
-	mixin混入的方式
+	Home和Detail都有回到顶部；
+	mixin混入的方式,抽取到mixin.js里面
+点击加入购物车：
+	VueX@3.1.0
+	当点击添加购物车时，Detail里addToCart函数先获取商品，通过vuex的commit调用index.js里的mutations里的addCart方法，并传参数
 
 
+把vuex的getters转换未computed，可以直接使用{{}}
+import {mapGetters} from 'vuex';
+computed:{
+	...mapGetters(["cartLength"])
+}
+Question:
+	this.$nextTick(()=>{})
 
 # supermall
 ## Project setup
