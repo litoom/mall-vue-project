@@ -414,7 +414,48 @@ TabControl保持一致:
 	mixin混入的方式,抽取到mixin.js里面
 点击加入购物车：
 	VueX@3.1.0
-	当点击添加购物车时，Detail里addToCart函数先获取商品，通过vuex的commit调用index.js里的mutations里的addCart方法，并传参数
+	当点击添加购物车时，Detail里addToCart函数先获取商品，通过vuex的commit调用index.js里的mutations里的addCart方法，并传参数;
+	1.监听首页的加入购物车按钮的点击，并且获取商品的信息iid,price,img,title,desc；
+	2.将商品添加到vuex里面，安装vuex，配置vuex，定义mutations，将商品添加到state.cartList里面；
+	3.重构代码：将mutations的代码抽取到actions(定义两个mutations)；将mutations/actions单独抽取到文件中，我没有抽取
+
+购物车的显示：
+	1.导航栏的显示，以及显示购物车商品的数量
+	2.购物车商品的展示：
+		1.从vuex的CartList里取出购物车商品的数据，遍历展示在CartList组件里，使用Scroll滚动
+		2.封装CartListItem，每一个商品显示的组件CartListItem，遍历展示
+		3.封装CheckButton
+
+商品的选中和不选中效果：
+	修改模型队形，改变选中和补选中
+
+底部工具栏的汇总
+	全选按钮
+	计算总价格
+	去结算按钮
+
+购物车全选按钮：
+	显示的状态：
+		商品列表全部选中时，全选按钮点亮：
+			判断是否有一个商品不选中，全选按钮就是不选中,
+	点击全选按钮：
+		点击全选按钮时，商品列表全部点亮：
+			如果购物车商品都是选中的，点击一次全选按钮，商品全部不选中：
+			如果原来有不选中，则商品全部选中：
+
+点击加入购物车弹窗的动画效果:Toast
+	1.在Detail里监听点击加入购物车事件：
+			不是一点击按钮就提示添加购物车成功，而是等完成操作之后再提示添加成功，是一个异步操作;dispatch返回一个Promise,再index.js里操作resolve()；然后在Detail.js的dispatch接收到返回的Promise，dispatch进行then操作
+		补充：1).mapActions：也可以把vuex的actions方法映射到组件的methods方法
+				//Detail.vue import {mapActions} from 'vuex'
+				...mapActions(['addCart'])
+				//可以直接调用使用 this.addCart()...........
+				2).Actions可以返回一个Promise
+	2.封装Toast组件
+		1).普通组件封装
+		2).插件方式封装
+
+
 
 
 把vuex的getters转换未computed，可以直接使用{{}}

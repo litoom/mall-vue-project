@@ -13,6 +13,8 @@
     </cart-list>
 
    <!-- 底部汇总结算 -->
+   <cart-bottom-bar>
+   </cart-bottom-bar>
   </div>
 </template>
 
@@ -20,12 +22,15 @@
 import NavBar from '../../components/common/navbar/NavBar'
 import {mapGetters} from 'vuex';
 
-import CartList from './childComps/CartList'
+import CartList from './childComps/CartList';
+import CartBottomBar from './childComps/CartBottomBar';
+
 export default {
   name:"Cart",
   components:{
     NavBar,
     CartList,
+    CartBottomBar,
   },
   computed:{
     // 把vuex的getters转换未computed，可以直接使用{{}}
@@ -46,5 +51,8 @@ export default {
   background-color: pink;
   color: #fff;
   font-size: 20px;
+}
+.cart {
+  height: 100vh;
 }
 </style>

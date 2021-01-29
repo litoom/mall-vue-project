@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex"
 
+
 //1.安装插件
 Vue.use(Vuex);
 
@@ -34,37 +35,44 @@ const store = new Vuex.Store({
     //   }
     // }
     // 如果这个商品已存在，则在给商品的数量加1
-    addCounter(state,payload){
+    addCounter(state, payload) {
       payload.count += 1;
     },
     //如果这个商品之前没有在购物车里，则把这个商添加进去
-    addToCart(state,payload){
-      state.cartList.push(payload)
-    }
+    addToCart(state, payload) {
+      //将新添加进购物车的商品选中状态改为true
+      payload.checked = true;
+      state.cartList.push(payload);
+    },
+
   },
   actions: {
     addCart(context, payload) {
-      //1.查找之前数组中是否有该商品
-      let oldProduct = context.state.cartList.find((item) => item.iid === payload.iid
-      );
-      //2.判断oldProduct
-      if (oldProduct) {
-        // oldProduct.count += 1;
-        context.commit('addCounter',oldProduct)
-      } else {
-        payload.count = 1;
-        // context.state.cartList.push(payload);
-        context.commit("addToCart",payload);
-      }
+      return new Promise((resolve, reject) => {
+        //1.查找之前数组中是否有该商品
+        let oldProduct = context.state.cartList.find((item) => item.iid === payload.iid
+        );
+        //2.判断oldProduct
+        if (oldProduct) {
+          // oldProduct.count += 1;
+          context.commit('addCounter', oldProduct);
+          resolve('当前商品数量+1');
+        } else {
+          payload.count = 1;
+          // context.state.cartList.push(payload);
+          context.commit("addToCart", payload);
+          resolve('添加了新的商品');
+        }
+      })
     }
   },
   // 可以把getters转化为计算属性
-  getters:{
+  getters: {
     //购物车商品的数量
     cartLength(state) {
       return state.cartList.length;
     },
-    cartList(state){
+    cartList(state) {
       return state.cartList;
     }
   }

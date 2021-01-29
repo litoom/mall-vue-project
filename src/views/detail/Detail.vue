@@ -33,6 +33,7 @@
     </scroll>
     <detail-bottom-bar @addCart="addToCart"> </detail-bottom-bar>
     <back-top @click.native="backTop" v-show="isShowBackTop"></back-top>
+    <!-- <toast :message="message" :show="show"></toast> -->
   </div>
 </template>
 
@@ -56,6 +57,9 @@ import GoodsList from "../../components/content/goods/GoodsList";
 import DetailBottomBar from "./childComponents/DetailBottomBar";
 // import BackTop from '../../components/content/backTop/BackTop'  混入
 import { backTopMixin } from "../../common/mixin";
+import { mapActions } from "vuex";
+
+// import Toast from "../../components/common/toast/Toast";
 
 export default {
   name: "Detail",
@@ -72,6 +76,8 @@ export default {
       themeTopYs: [], //商品 参数 评论 推荐的offsetTop值
       currentIndex: 0,
       // isShowBackTop:false,  //回到顶部  混入
+      // message: "",
+      // show: false,
     };
   },
   mixins: [backTopMixin],
@@ -87,6 +93,7 @@ export default {
     GoodsList,
     DetailBottomBar,
     // BackTop,  混入
+    // Toast,
   },
   created() {
     //获取iid
@@ -215,8 +222,24 @@ export default {
       product.iid = this.iid;
       // product.count = 0;
       //2.将商品添加到购物车里,添加到vuex的state里，修改state要通过mutations修改
-      this.$store.dispatch("addCart", product);
+      this.$store.dispatch("addCart", product).then((res) => {
+        //注释掉是因为有更好的封装,插件方式封装
+        // // console.log(res);
+        // this.show = true;
+        // this.message = res;
+        // //延时消失
+        // setTimeout(() => {
+        //   this.show = false;
+        //   this.message = '';
+        // }, 1000);
+        this.$toast.show(res,1500)
+      });
+      //也可以用映射actions的方法 this.addCart(product).then((res) => {
+      // console.log(res);});
+      //3.添加到购物车Toast
+      // 不是一点击按钮就提示添加购物车成功，而是等完成操作之后再提示添加成功，是一个异步操作;dispatch返回一个Promise
     },
+    ...mapActions(["addCart"]),
   },
   mounted() {
     //在这里获取NavBar的各个组件的offsetTop的值，可以吗？
