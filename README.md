@@ -454,7 +454,11 @@ TabControl保持一致:
 	2.封装Toast组件
 		1).普通组件封装
 		2).插件方式封装
-
+				通过在Detail里this.$toast.show(res,1500)显示弹窗;
+				把组件封装到插件里，安装插件，就会把组件创建出来，一开始就会添加到prototype里；
+				1.在toast文件夹里创建index.js文件
+				2.安装toast插件,本质上是调用toast对象的install方法
+					Vue.use(toast);
 
 
 

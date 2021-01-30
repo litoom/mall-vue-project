@@ -222,20 +222,25 @@ export default {
       product.iid = this.iid;
       // product.count = 0;
       //2.将商品添加到购物车里,添加到vuex的state里，修改state要通过mutations修改
-      this.$store.dispatch("addCart", product).then((res) => {
-        //注释掉是因为有更好的封装,插件方式封装
-        // // console.log(res);
-        // this.show = true;
-        // this.message = res;
-        // //延时消失
-        // setTimeout(() => {
-        //   this.show = false;
-        //   this.message = '';
-        // }, 1000);
-        this.$toast.show(res,1500)
+      // this.$store.dispatch("addCart", product).then((res) => {
+      //注释掉是因为有更好的封装,插件方式封装
+      // // console.log(res);
+      // this.show = true;
+      // this.message = res;
+      // //延时消失
+      // setTimeout(() => {
+      //   this.show = false;
+      //   this.message = '';
+      // }, 1000);
+      // });
+
+      //也可以用映射actions的方法
+      this.addCart(product).then(res => {
+        console.log(res);
+        console.log(this.$toast);
+        // !!!!!!!!!!!!!!!!!!!!!!!!
+        this.$toast.show(res, 1500);
       });
-      //也可以用映射actions的方法 this.addCart(product).then((res) => {
-      // console.log(res);});
       //3.添加到购物车Toast
       // 不是一点击按钮就提示添加购物车成功，而是等完成操作之后再提示添加成功，是一个异步操作;dispatch返回一个Promise
     },
