@@ -470,6 +470,35 @@ computed:{
 Question:
 	this.$nextTick(()=>{})
 
+————————项目基本完成————————
+
+补充:
+	1.fastClick
+		移动设备上的浏览器默认会在用户点击屏幕大约延迟300毫秒后才会触发点击事件，这是为了检查用户是否在做双击。为了能够立即响应用户的点击事件，才有了FastClick
+		npm install fastclick --save
+		在main.js中导入:
+			import fastClick from 'fastclick'
+		使用fastclick:
+			fastClick.attach(document.body);
+	2.图片懒加载vue-lazyload
+			图片懒加载是用到时再加载，图片需要显示在屏幕上时，再加载这张图片
+				安装：npm install vue-lazyload --save
+				导入：import VueLazyLoad from 'vue-lazyload'
+				Vue安装：Vue.use(VueLazyLoad);
+				修改img:src 改为v-lazy
+	3.px2vw
+		postcss-px-to-viewport@0.0.3
+
+
+
+
+
+
+
+
+
+
+
 # supermall
 ## Project setup
 ```

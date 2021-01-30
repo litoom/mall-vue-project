@@ -1,7 +1,7 @@
 <template>
   <div class="goods-item" @click="itemClick">
     <!-- <img :src="goodsItem.show.img" alt="" @load="imageLoad" /> -->
-    <img :src="showImage" alt="" @load="imageLoad" />
+    <img v-lazy="showImage" alt="" @load="imageLoad" />
     <!-- @load="imageLoad" 当img图片加载完成之后调用imageLoad方法 -->
     <div class="goods-info">
       <p>{{ goodsItem.title }}</p>
